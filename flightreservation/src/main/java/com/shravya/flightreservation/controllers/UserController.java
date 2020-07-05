@@ -19,7 +19,7 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepo;
 	
-	@RequestMapping("/home")
+	@RequestMapping("/showReg")
 	public String showRegistrationPage() {
 		return "login/registerUser";
 	}
@@ -30,19 +30,20 @@ public class UserController {
 		return "login/login";
 	}
 	
+	@RequestMapping("/showLogin")
+	public String showLoginPage() {
+		return "login/login";
+	}
+	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public String login(@RequestParam("email") String email, @RequestParam("password") String password, ModelMap modelMap) {
-		Optional<User> optionalUser = Optional.of(userRepo.findByEmail(email));
-		if(optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			if(user.getPassword().equals(password))
-				return "findFlights";
-			else {
-				modelMap.addAttribute("msg", "Invalid Password! Please try again.");
-				return "login/login";
-			}
-		}
-		return "login/registerUser";
+		User user = userRepo.findByEmail(email);
+		if(user != null && user.getPassword().equals(password))
+			return "findFlights";
+		else {
+			modelMap.addAttribute("msg", "Invalid Username/Password. Please try again.");
+			return "login/login";
+		}		
 	}
 	
 //	@RequestMapping("/login")
